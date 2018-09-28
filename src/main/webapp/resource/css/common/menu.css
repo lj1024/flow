@@ -1,0 +1,46 @@
+body{
+	margin:0px;
+}
+.el-col {
+	border-radius: 4px;
+}
+
+.bg-purple-dark {
+	background: #99a9bf;
+}
+
+.bg-purple {
+	background: #d3dce6;
+}
+
+.bg-purple-light {
+	background: #e5e9f2;
+}
+
+.grid-content {
+	min-height: 36px;
+}
+
+.grid-top {
+	min-height: 100px;
+}
+
+.bg-blue-light {
+	background: #409EFF;
+}
+.flow-main{
+	margin: 20px
+}
+
+.buttonAboveTable .el-button{
+	float:right;
+	margin: 5px;
+}
+.successIcon{
+	color:#67C23A;
+	font-size: 1.5em
+}
+.dangerIcon{
+	color:#F56C6C;
+	font-size: 1.5em
+}

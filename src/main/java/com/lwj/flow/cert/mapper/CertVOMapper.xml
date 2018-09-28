@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.cert.mapper.CertVOMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.cert.entity.VO.CertVO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="certificate_no" property="certificateNo" jdbcType="VARCHAR" />
+    <result column="license_date" property="licenseDate" jdbcType="TIMESTAMP" />
+    <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="review_date" property="reviewDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="trade_id" property="tradeId" jdbcType="INTEGER" />
+    <result column="trade_name" property="tradeName" jdbcType="VARCHAR" />
+    <result column="domain_id" property="domainId" jdbcType="INTEGER" />
+    <result column="domain_name" property="domainName" jdbcType="VARCHAR" />
+    <result column="level_id" property="levelId" jdbcType="INTEGER" />
+    <result column="level_name" property="levelName" jdbcType="VARCHAR" />
+    <result column="employee_id" property="employeeId" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+    <association property="employee" javaType="com.lwj.flow.cert.entity.Employee">
+    <id column="emp_id" property="id" jdbcType="INTEGER" />
+    <result column="em_name" property="emName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="identity_card_no" property="identityCardNo" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="INTEGER" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="social_security" property="socialSecurity" jdbcType="VARCHAR" />
+    <result column="is_internal" property="isInternal" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="emp_remark" property="remark" jdbcType="VARCHAR" />
+    </association>
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryId != null" >        and id=#{queryId}      </if>
+      <if test="queryCertificateNo != null" >        and certificate_no=#{queryCertificateNo}      </if>
+      <if test="queryLicenseDate != null" >        and license_date=#{queryLicenseDate}      </if>
+      <if test="queryExpireDate != null" >        and expire_date=#{queryExpireDate}      </if>
+      <if test="queryReviewDate != null" >        and review_date=#{queryReviewDate}      </if>
+      <if test="queryRemark != null" >        and remark=#{queryRemark}      </if>
+      <if test="queryTradeId != null" >        and trade_id=#{queryTradeId}      </if>
+      <if test="queryTradeName != null" >        and trade_name=#{queryTradeName}      </if>
+      <if test="queryDomainId != null" >        and domain_id=#{queryDomainId}      </if>
+      <if test="queryDomainName != null" >        and domain_name=#{queryDomainName}      </if>
+      <if test="queryLevelId != null" >        and level_id=#{queryLevelId}      </if>
+      <if test="queryLevelName != null" >        and level_name=#{queryLevelName}      </if>
+      <if test="queryEmployeeId != null" >        and employee_id=#{queryEmployeeId}      </if>
+      <if test="queryIsValid != null" >        and is_valid=#{queryIsValid}      </if>
+    </where>
+  </sql>
+
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select c.* from (select a.*,b.id as emp_id,b.em_name,b.sex,b.identity_card_no,b.phone,b.email,b.address,b.province,b.city,b.social_security,b.is_internal,b.user_id,b.remark as emp_remark from certificate a left join employee b on a.employee_id = b.id) c
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select c.* from (select a.*,b.id as emp_id,b.em_name,b.sex,b.identity_card_no,b.phone,b.email,b.address,b.province,b.city,b.social_security,b.is_internal,b.user_id,b.remark as emp_remark from certificate a left join employee b on a.employee_id = b.id) c
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select c.* from (select a.*,b.id as emp_id,b.em_name,b.sex,b.identity_card_no,b.phone,b.email,b.address,b.province,b.city,b.social_security,b.is_internal,b.user_id,b.remark as emp_remark from certificate a left join employee b on a.employee_id = b.id) c
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+</mapper>

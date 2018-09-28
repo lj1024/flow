@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.login.mapper.RoleResourcesMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.login.entity.RoleResources" >
+    <id column="roleId" property="roleid" jdbcType="INTEGER" />
+    <id column="resourcesId" property="resourcesid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryRoleid != null" >        and roleId=#{queryRoleid}      </if>
+      <if test="queryResourcesid != null" >        and resourcesId=#{queryResourcesid}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateRoleid != null" >        roleId=#{updateRoleid},      </if>
+      <if test="updateResourcesid != null" >        resourcesId=#{updateResourcesid},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.login.entity.RoleResources" >
+    insert into role_resources (roleId, resourcesId)
+    values (#{roleid,jdbcType=INTEGER}, #{resourcesid,jdbcType=INTEGER})
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from role_resources
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update role_resources
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from role_resources
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from role_resources
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from role_resources
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from role_resources
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from role_resources
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+  <select id="queryBasicRoleResources" parameterType="map" resultMap="BaseResultMap">
+  select a.* from role_resources a,resources b where a.resourcesId = b.id and b.type=2 and a.roleId=#{queryRoleid}
+  </select>
+</mapper>

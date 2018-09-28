@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.login.mapper.UserRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.login.entity.UserRole" >
+    <result column="userId" property="userid" jdbcType="INTEGER" />
+    <result column="roleId" property="roleid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryUserid != null" >        and userId=#{queryUserid}      </if>
+      <if test="queryRoleid != null" >        and roleId=#{queryRoleid}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateUserid != null" >        userId=#{updateUserid},      </if>
+      <if test="updateRoleid != null" >        roleId=#{updateRoleid},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.login.entity.UserRole" >
+    insert into user_role (userId, roleId)
+    values (#{userid,jdbcType=INTEGER}, #{roleid,jdbcType=INTEGER})
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from user_role
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update user_role
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from user_role
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from user_role
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from user_role
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from user_role
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from user_role
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+</mapper>

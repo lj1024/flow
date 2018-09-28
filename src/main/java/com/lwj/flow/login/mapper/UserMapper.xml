@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.login.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.login.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="INTEGER" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="photo" property="photo" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP" />
+    <result column="is_leave" property="isLeave" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryId != null" >        and id=#{queryId}      </if>
+      <if test="queryUsername != null" >        and username=#{queryUsername}      </if>
+      <if test="queryEmail != null" >        and email=#{queryEmail}      </if>
+      <if test="queryPassword != null" >        and password=#{queryPassword}      </if>
+      <if test="queryRealName != null" >        and real_name=#{queryRealName}      </if>
+      <if test="queryPhone != null" >        and phone=#{queryPhone}      </if>
+      <if test="querySex != null" >        and sex=#{querySex}      </if>
+      <if test="queryPhoto != null" >        and photo=#{queryPhoto}      </if>
+      <if test="queryCreateTime != null" >        and create_time=#{queryCreateTime}      </if>
+      <if test="queryLastLoginTime != null" >        and last_login_time=#{queryLastLoginTime}      </if>
+      <if test="queryIsLeave != null" >        and is_leave=#{queryIsLeave}      </if>
+      <if test="queryStatus != null" >        and status=#{queryStatus}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateId != null" >        id=#{updateId},      </if>
+      <if test="updateUsername != null" >        username=#{updateUsername},      </if>
+      <if test="updateEmail != null" >        email=#{updateEmail},      </if>
+      <if test="updatePassword != null" >        password=#{updatePassword},      </if>
+      <if test="updateRealName != null" >        real_name=#{updateRealName},      </if>
+      <if test="updatePhone != null" >        phone=#{updatePhone},      </if>
+      <if test="updateSex != null" >        sex=#{updateSex},      </if>
+      <if test="updatePhoto != null" >        photo=#{updatePhoto},      </if>
+      <if test="updateCreateTime != null" >        create_time=#{updateCreateTime},      </if>
+      <if test="updateLastLoginTime != null" >        last_login_time=#{updateLastLoginTime},      </if>
+      <if test="updateIsLeave != null" >        is_leave=#{updateIsLeave},      </if>
+      <if test="updateStatus != null" >        status=#{updateStatus},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.login.entity.User" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      select nextval('idseq')
+    </selectKey>
+    insert into user (id, username, email, 
+      password, real_name, phone, 
+      sex, photo, create_time, 
+      last_login_time, is_leave, status
+      )
+    values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, #{phone,jdbcType=INTEGER}, 
+      #{sex,jdbcType=VARCHAR}, #{photo,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastLoginTime,jdbcType=TIMESTAMP}, #{isLeave,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}
+      )
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from user
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update user
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from user
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from user
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from user
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from user
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from user
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+</mapper>

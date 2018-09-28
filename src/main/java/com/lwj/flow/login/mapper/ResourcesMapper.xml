@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.login.mapper.ResourcesMapper">
+	<resultMap id="BaseResultMap" type="com.lwj.flow.login.entity.Resources">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="resUrl" property="resurl" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="parentId" property="parentid" jdbcType="INTEGER" />
+		<result column="sort" property="sort" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="QueryFilter">
+		<where>
+			<if test="queryId != null"> and id=#{queryId}      </if>
+			<if test="queryName != null"> and name=#{queryName}      </if>
+			<if test="queryResurl != null"> and resUrl=#{queryResurl}      </if>
+			<if test="queryType != null"> and type=#{queryType}      </if>
+			<if test="queryParentid != null"> and parentId=#{queryParentid}
+			</if>
+			<if test="querySort != null"> and sort=#{querySort}      </if>
+		</where>
+	</sql>
+	<sql id="SetFilter">
+		<set>
+			<if test="updateId != null"> id=#{updateId},      </if>
+			<if test="updateName != null"> name=#{updateName},      </if>
+			<if test="updateResurl != null"> resUrl=#{updateResurl},      </if>
+			<if test="updateType != null"> type=#{updateType},      </if>
+			<if test="updateParentid != null"> parentId=#{updateParentid},
+			</if>
+			<if test="updateSort != null"> sort=#{updateSort},      </if>
+		</set>
+	</sql>
+	<insert id="add" parameterType="com.lwj.flow.login.entity.Resources">
+		<selectKey resultType="java.lang.Integer" keyProperty="id"
+			order="BEFORE">
+			select nextval('idseq')
+		</selectKey>
+		insert into resources (id, name, resUrl,
+		type, parentId, sort
+		)
+		values
+		(#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{resurl,jdbcType=VARCHAR},
+		#{type,jdbcType=INTEGER},
+		#{parentid,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}
+		)
+	</insert>
+	<delete id="delete" parameterType="map">
+		delete from resources
+		<include refid="QueryFilter" />
+	</delete>
+	<update id="update" parameterType="map">
+		update resources
+		<include refid="SetFilter" />
+		<include refid="QueryFilter" />
+	</update>
+	<select id="read" parameterType="map" resultMap="BaseResultMap">
+		select * from resources
+		<include refid="QueryFilter" />
+	</select>
+	<select id="readOne" parameterType="map" resultMap="BaseResultMap">
+		select * from resources
+		<include refid="QueryFilter" />
+		<include refid="PUBLIC.OrderFilter" />
+		limit 0,1
+	</select>
+	<select id="query" parameterType="map" resultMap="BaseResultMap">
+		select * from resources
+		<include refid="QueryFilter" />
+		<include refid="PUBLIC.OrderFilter" />
+	</select>
+	<select id="count" parameterType="map" resultType="long">
+		select count(*) from resources
+		<include refid="QueryFilter" />
+	</select>
+	<select id="page" parameterType="map" resultMap="BaseResultMap">
+		select * from resources
+		<include refid="QueryFilter" />
+		<include refid="PUBLIC.OrderFilter" />
+		<include refid="PUBLIC.Mysql" />
+	</select>
+	<select id="queryResourcesByUser" parameterType="map" resultMap="BaseResultMap">
+		SELECT
+		d.*
+		FROM
+		USER a
+		INNER JOIN user_role b ON a.id = b.userId
+		INNER JOIN
+		role_resources c ON b.roleId = c.roleId
+		INNER JOIN resources d ON
+		c.reSourcesId = d.id
+		<where>
+			<if test="queryId != null"> and a.id=#{queryId}      </if>
+			<if test="queryUsername != null"> and a.username=#{queryUsername}
+			</if>
+			<if test="queryEmail != null"> and a.email=#{queryEmail}      </if>
+			<if test="queryPassword != null"> and a.password=#{queryPassword}
+			</if>
+			<if test="queryCreateTime != null"> and
+				a.create_time=#{queryCreateTime}      </if>
+			<if test="queryLastLoginTime != null"> and
+				a.last_login_time=#{queryLastLoginTime}      </if>
+			<if test="queryStatus != null"> and a.status=#{queryStatus}      </if>
+		</where>
+	</select>
+</mapper>

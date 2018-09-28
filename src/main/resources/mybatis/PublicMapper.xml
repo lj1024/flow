@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PUBLIC">
+
+	<sql id="OrderFilter">
+		<if test="orderMap != null">
+			order by
+			<foreach collection="orderMap.keys" item="key" separator=",">
+				${key} ${orderMap[key]}
+			</foreach>
+		</if>
+	</sql>
+	<sql id="Mysql">
+		limit #{pageFrom},#{pageTo}
+	</sql>
+	<sql id="OracleBefore">
+			select * from ( select row_.*, rownum rownum_ from (
+	</sql>
+	<sql id="OracleAfter">
+			<![CDATA[) row_ where rownum <= #{pageTo}) where rownum_ >= #{pageFrom} ]]>
+		
+	</sql>
+	
+	
+	<sql id="beforePage">
+		<if test="rowStart != null">
+			<if test="rowEnd != null">
+				select * from ( select row_.*, rownum rownum_ from (
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="afterPage">
+		<if test="rowStart != null">
+			<if test="rowEnd != null">
+				<![CDATA[) row_ where rownum <= #{rowEnd}) where rownum_ >= #{rowStart} ]]>
+			</if>
+		</if>
+	</sql>
+<!-- ${orderMap[${key}]} -->
+
+</mapper>

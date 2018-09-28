@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.cert.mapper.CertificateMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.cert.entity.Certificate" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="certificate_no" property="certificateNo" jdbcType="VARCHAR" />
+    <result column="license_date" property="licenseDate" jdbcType="TIMESTAMP" />
+    <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP" />
+    <result column="review_date" property="reviewDate" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="trade_id" property="tradeId" jdbcType="INTEGER" />
+    <result column="trade_name" property="tradeName" jdbcType="VARCHAR" />
+    <result column="domain_id" property="domainId" jdbcType="INTEGER" />
+    <result column="domain_name" property="domainName" jdbcType="VARCHAR" />
+    <result column="level_id" property="levelId" jdbcType="INTEGER" />
+    <result column="level_name" property="levelName" jdbcType="VARCHAR" />
+    <result column="employee_id" property="employeeId" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryId != null" >        and id=#{queryId}      </if>
+      <if test="queryCertificateNo != null" >        and certificate_no=#{queryCertificateNo}      </if>
+      <if test="queryLicenseDate != null" >        and license_date=#{queryLicenseDate}      </if>
+      <if test="queryExpireDate != null" >        and expire_date=#{queryExpireDate}      </if>
+      <if test="queryReviewDate != null" >        and review_date=#{queryReviewDate}      </if>
+      <if test="queryRemark != null" >        and remark=#{queryRemark}      </if>
+      <if test="queryTradeId != null" >        and trade_id=#{queryTradeId}      </if>
+      <if test="queryTradeName != null" >        and trade_name=#{queryTradeName}      </if>
+      <if test="queryDomainId != null" >        and domain_id=#{queryDomainId}      </if>
+      <if test="queryDomainName != null" >        and domain_name=#{queryDomainName}      </if>
+      <if test="queryLevelId != null" >        and level_id=#{queryLevelId}      </if>
+      <if test="queryLevelName != null" >        and level_name=#{queryLevelName}      </if>
+      <if test="queryEmployeeId != null" >        and employee_id=#{queryEmployeeId}      </if>
+      <if test="queryIsValid != null" >        and is_valid=#{queryIsValid}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateId != null" >        id=#{updateId},      </if>
+      <if test="updateCertificateNo != null" >        certificate_no=#{updateCertificateNo},      </if>
+      <if test="updateLicenseDate != null" >        license_date=#{updateLicenseDate},      </if>
+      <if test="updateExpireDate != null" >        expire_date=#{updateExpireDate},      </if>
+      <if test="updateReviewDate != null" >        review_date=#{updateReviewDate},      </if>
+      <if test="updateRemark != null" >        remark=#{updateRemark},      </if>
+      <if test="updateTradeId != null" >        trade_id=#{updateTradeId},      </if>
+      <if test="updateTradeName != null" >        trade_name=#{updateTradeName},      </if>
+      <if test="updateDomainId != null" >        domain_id=#{updateDomainId},      </if>
+      <if test="updateDomainName != null" >        domain_name=#{updateDomainName},      </if>
+      <if test="updateLevelId != null" >        level_id=#{updateLevelId},      </if>
+      <if test="updateLevelName != null" >        level_name=#{updateLevelName},      </if>
+      <if test="updateEmployeeId != null" >        employee_id=#{updateEmployeeId},      </if>
+      <if test="updateIsValid != null" >        is_valid=#{updateIsValid},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.cert.entity.Certificate" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      select nextval('idseq')
+    </selectKey>
+    insert into certificate (id, certificate_no, license_date, 
+      expire_date, review_date, remark, 
+      trade_id, trade_name, domain_id, 
+      domain_name, level_id, level_name, 
+      employee_id, is_valid)
+    values (#{id,jdbcType=INTEGER}, #{certificateNo,jdbcType=VARCHAR}, #{licenseDate,jdbcType=TIMESTAMP}, 
+      #{expireDate,jdbcType=TIMESTAMP}, #{reviewDate,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, 
+      #{tradeId,jdbcType=INTEGER}, #{tradeName,jdbcType=VARCHAR}, #{domainId,jdbcType=INTEGER}, 
+      #{domainName,jdbcType=VARCHAR}, #{levelId,jdbcType=INTEGER}, #{levelName,jdbcType=VARCHAR}, 
+      #{employeeId,jdbcType=INTEGER}, #{isValid,jdbcType=VARCHAR})
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from certificate
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update certificate
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from certificate
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from certificate
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from certificate
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from certificate
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from certificate
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.cert.mapper.EmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.cert.entity.Employee" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="em_name" property="emName" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="identity_card_no" property="identityCardNo" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="INTEGER" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="social_security" property="socialSecurity" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="is_internal" property="isInternal" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryId != null" >        and id=#{queryId}      </if>
+      <if test="queryEmName != null" >        and em_name=#{queryEmName}      </if>
+      <if test="querySex != null" >        and sex=#{querySex}      </if>
+      <if test="queryIdentityCardNo != null" >        and identity_card_no=#{queryIdentityCardNo}      </if>
+      <if test="queryPhone != null" >        and phone=#{queryPhone}      </if>
+      <if test="queryEmail != null" >        and email=#{queryEmail}      </if>
+      <if test="queryAddress != null" >        and address=#{queryAddress}      </if>
+      <if test="queryProvince != null" >        and province=#{queryProvince}      </if>
+      <if test="queryCity != null" >        and city=#{queryCity}      </if>
+      <if test="querySocialSecurity != null" >        and social_security=#{querySocialSecurity}      </if>
+      <if test="queryCreateTime != null" >        and create_time=#{queryCreateTime}      </if>
+      <if test="queryUpdateTime != null" >        and update_time=#{queryUpdateTime}      </if>
+      <if test="queryIsInternal != null" >        and is_internal=#{queryIsInternal}      </if>
+      <if test="queryUserId != null" >        and user_id=#{queryUserId}      </if>
+      <if test="queryRemark != null" >        and remark=#{queryRemark}      </if>
+      <if test="queryIsValid != null" >        and is_valid=#{queryIsValid}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateId != null" >        id=#{updateId},      </if>
+      <if test="updateEmName != null" >        em_name=#{updateEmName},      </if>
+      <if test="updateSex != null" >        sex=#{updateSex},      </if>
+      <if test="updateIdentityCardNo != null" >        identity_card_no=#{updateIdentityCardNo},      </if>
+      <if test="updatePhone != null" >        phone=#{updatePhone},      </if>
+      <if test="updateEmail != null" >        email=#{updateEmail},      </if>
+      <if test="updateAddress != null" >        address=#{updateAddress},      </if>
+      <if test="updateProvince != null" >        province=#{updateProvince},      </if>
+      <if test="updateCity != null" >        city=#{updateCity},      </if>
+      <if test="updateSocialSecurity != null" >        social_security=#{updateSocialSecurity},      </if>
+      <if test="updateCreateTime != null" >        create_time=#{updateCreateTime},      </if>
+      <if test="updateUpdateTime != null" >        update_time=#{updateUpdateTime},      </if>
+      <if test="updateIsInternal != null" >        is_internal=#{updateIsInternal},      </if>
+      <if test="updateUserId != null" >        user_id=#{updateUserId},      </if>
+      <if test="updateRemark != null" >        remark=#{updateRemark},      </if>
+      <if test="updateIsValid != null" >        is_valid=#{updateIsValid},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.cert.entity.Employee" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      select nextval('idseq')
+    </selectKey>
+    insert into employee (id, em_name, sex, 
+      identity_card_no, phone, email, 
+      address, province, city, 
+      social_security, create_time, update_time, 
+      is_internal, user_id, remark, 
+      is_valid)
+    values (#{id,jdbcType=INTEGER}, #{emName,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
+      #{identityCardNo,jdbcType=VARCHAR}, #{phone,jdbcType=INTEGER}, #{email,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, 
+      #{socialSecurity,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{isInternal,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, 
+      #{isValid,jdbcType=VARCHAR})
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from employee
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update employee
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from employee
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from employee
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from employee
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from employee
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from employee
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+</mapper>

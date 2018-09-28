@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.login.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.login.entity.Role" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="roleDesc" property="roledesc" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryId != null" >        and id=#{queryId}      </if>
+      <if test="queryRoledesc != null" >        and roleDesc=#{queryRoledesc}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateId != null" >        id=#{updateId},      </if>
+      <if test="updateRoledesc != null" >        roleDesc=#{updateRoledesc},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.login.entity.Role" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      select nextval('idseq')
+    </selectKey>
+    insert into role (id, roleDesc)
+    values (#{id,jdbcType=INTEGER}, #{roledesc,jdbcType=VARCHAR})
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from role
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update role
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from role
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from role
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from role
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from role
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from role
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+  <select id="getRoleByUserId" parameterType="Integer" resultMap="BaseResultMap">
+  select a.* from role a ,user_role b where a.id=b.roleId and b.userId=#{userid}
+  </select>
+</mapper>

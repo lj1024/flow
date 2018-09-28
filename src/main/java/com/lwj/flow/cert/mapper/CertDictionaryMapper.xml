@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lwj.flow.cert.mapper.CertDictionaryMapper" >
+  <resultMap id="BaseResultMap" type="com.lwj.flow.cert.entity.CertDictionary" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="dic_name" property="dicName" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="INTEGER" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="QueryFilter" >
+    <where >
+      <if test="queryId != null" >        and id=#{queryId}      </if>
+      <if test="queryDicName != null" >        and dic_name=#{queryDicName}      </if>
+      <if test="queryType != null" >        and type=#{queryType}      </if>
+      <if test="queryParentId != null" >        and parent_id=#{queryParentId}      </if>
+      <if test="querySort != null" >        and sort=#{querySort}      </if>
+      <if test="queryIsValid != null" >        and is_valid=#{queryIsValid}      </if>
+    </where>
+  </sql>
+  <sql id="SetFilter" >
+    <set >
+      <if test="updateId != null" >        id=#{updateId},      </if>
+      <if test="updateDicName != null" >        dic_name=#{updateDicName},      </if>
+      <if test="updateType != null" >        type=#{updateType},      </if>
+      <if test="updateParentId != null" >        parent_id=#{updateParentId},      </if>
+      <if test="updateSort != null" >        sort=#{updateSort},      </if>
+      <if test="updateIsValid != null" >        is_valid=#{updateIsValid},      </if>
+    </set>
+  </sql>
+  <insert id="add" parameterType="com.lwj.flow.cert.entity.CertDictionary" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      select nextval('idseq')
+    </selectKey>
+    insert into cert_dictionary (id, dic_name, type, 
+      parent_id, sort, is_valid
+      )
+    values (#{id,jdbcType=INTEGER}, #{dicName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, 
+      #{parentId,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, #{isValid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <delete id="delete" parameterType="map" >
+    delete from cert_dictionary
+    <include refid="QueryFilter" />
+  </delete>
+  <update id="update" parameterType="map" >
+    update cert_dictionary
+    <include refid="SetFilter" />
+    <include refid="QueryFilter" />
+  </update>
+  <select id="read" parameterType="map" resultMap="BaseResultMap" >
+    select * from cert_dictionary
+    <include refid="QueryFilter" />
+  </select>
+  <select id="readOne" parameterType="map" resultMap="BaseResultMap" >
+    select * from cert_dictionary
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    limit 0,1
+  </select>
+  <select id="query" parameterType="map" resultMap="BaseResultMap" >
+    select * from cert_dictionary
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+  </select>
+  <select id="count" parameterType="map" resultType="long" >
+    select count(*) from cert_dictionary
+    <include refid="QueryFilter" />
+  </select>
+  <select id="page" parameterType="map" resultMap="BaseResultMap" >
+    select * from cert_dictionary
+    <include refid="QueryFilter" />
+    <include refid="PUBLIC.OrderFilter" />
+    <include refid="PUBLIC.Mysql" />
+  </select>
+  <select id="getSortNumber" resultType="Integer">
+     select nextval('sortseq')
+  </select>
+</mapper>

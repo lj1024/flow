@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.1.xsd
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.1.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
+	<context:property-placeholder location="classpath*:*.properties" />
+	<context:component-scan base-package="com.lwj.flow.*.service,com.lwj.flow.*.dao" />
+	<!-- 数据库连接池 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.driverClass}" />
+		<property name="url" value="${jdbc.jdbcUrl}" />
+		<property name="username" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="testOnBorrow" value="true"/>
+		<property name="removeAbandonedOnMaintenance" value="true"></property>
+	</bean>
+
+	<!-- redis连接池的配置 -->
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="${redis.pool.maxactive}" />
+		<property name="maxIdle" value="${redis.pool.maxidle}" />
+		<property name="maxWaitMillis" value="${redis.pool.maxwait}" />
+		<property name="testOnBorrow" value="${redis.pool.testonborrow}" />
+	</bean>
+
+	<!-- redis的连接池pool，不是必选项：timeout/password -->
+	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1" value="${redis.host}" type="java.lang.String" />
+		<constructor-arg index="2" value="${redis.port}" type="int" />
+	</bean>
+
+	<bean id="javaMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host">
+			<value>${mail.host}</value>
+		</property>
+		<property name="port">
+			<value type="java.lang.Integer">${mail.port}</value>
+		</property>
+		<property name="protocol">
+			<value>${mail.protocol}</value>
+		</property>
+		<property name="username">
+			<value>${mail.username}</value>
+		</property>
+		<property name="password">
+			<value>${mail.password}</value>
+		</property>
+	</bean>
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- mybatis配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis/Configuration.xml"></property>
+	</bean>
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.lwj.flow.**.mapper" />
+		<!-- 使用sqlSessionFactoryBeanName 能够避免property-placeholder失效 -->
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	<!-- 可通过注解控制事务 -->
+	<tx:annotation-driven />
+	<!-- shiro配置 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login/login"/>
+		<property name="unauthorizedUrl" value="/login/unauthorized"/>
+		<!-- override these for application-specific URLs if you like: 
+		<property name="loginUrl" value="/login.jsp"/> <property name="successUrl" value="/home.jsp"/> 
+			<property name="unauthorizedUrl" value="/unauthorized.jsp"/> -->
+		<!-- The 'filters' property is not necessary since any declared javax.servlet.Filter 
+			bean -->
+		<!-- defined will be automatically acquired and available via its beanName 
+			in chain -->
+		<!-- definitions, but you can perform instance overrides or name aliases 
+			here if you like: -->
+		<!-- <property name="filters"> 
+		<map>
+		<entry key="perms" value-ref="AjaxSupportPermissionsAuthorizationFilter"/> 
+		</map>
+		</property> -->
+		<property name="filterChainDefinitions">
+			<value>
+			     /login/logout=logout
+			     /login/login=anon
+				 /resource/**=anon
+				 /** = authc
+			</value>
+		</property>
+	</bean>
+	<!-- The MemoryConstrainedCacheManager is a CacheManager implementation suitable for single-JVM production environments -->
+    <bean id="shiroCacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager"></bean>
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<!-- Single realm app. If you have multiple realms, use the 'realms' property instead. -->
+		<property name="realm" ref="myRealm" />
+		<property name="cacheManager" ref="shiroCacheManager"/>
+		<property name="sessionManager" ref="sessionManager"/>
+		<!-- By default the servlet container sessions will be used. Uncomment 
+			this line to use shiro's native sessions (see the JavaDoc for more): -->
+		<property name="sessionMode" value="native"/>
+	</bean>
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" lazy-init="false"/>
+	
+	<!-- Define the Shiro Realm implementation you want to use to connect to 
+		your back-end -->
+	<!-- security datasource: -->
+	<bean id="myRealm" class="com.lwj.flow.shiro.realm.MyShiroRealm">
+	<property name="credentialsMatcher" ref="credentialsMatcher"/>
+	</bean>
+	<!-- shiro凭证匹配器 -->
+	<bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+	<property name="HashAlgorithmName" value="md5"/>
+	<property name="hashIterations" value="2"/>
+	</bean>
+	
+	<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 设置session过期时间为1小时(单位：毫秒)，默认为30分钟 -->
+        <property name="globalSessionTimeout" value="3600000"></property>
+        <property name="sessionValidationSchedulerEnabled" value="true"></property>
+        <property name="sessionIdCookie">
+            <bean class="org.apache.shiro.web.servlet.SimpleCookie">
+                <property name="name" value="JSESSID" />
+            </bean>
+        </property>
+    </bean>
+
+
+
+</beans>
